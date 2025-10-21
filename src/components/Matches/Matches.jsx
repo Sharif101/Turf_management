@@ -24,6 +24,75 @@ export default function Matches({ bookings, loading }) {
       b.sport?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Helper for status badges
+  const getBadge = (type, value) => {
+    const baseClasses =
+      "px-2 py-1 rounded-full text-xs font-semibold uppercase";
+
+    if (type === "payment") {
+      switch (value) {
+        case "paid":
+          return (
+            <span className={`${baseClasses} bg-green-100 text-green-800`}>
+              Paid
+            </span>
+          );
+        case "partial":
+          return (
+            <span className={`${baseClasses} bg-yellow-100 text-yellow-800`}>
+              Partial
+            </span>
+          );
+        case "pending":
+        case "unpaid":
+          return (
+            <span className={`${baseClasses} bg-red-100 text-red-800`}>
+              Pending
+            </span>
+          );
+        default:
+          return (
+            <span className={`${baseClasses} bg-gray-100 text-gray-800`}>
+              {value}
+            </span>
+          );
+      }
+    } else if (type === "match") {
+      switch (value) {
+        case "upcoming":
+          return (
+            <span className={`${baseClasses} bg-blue-100 text-blue-800`}>
+              Upcoming
+            </span>
+          );
+        case "ongoing":
+          return (
+            <span className={`${baseClasses} bg-indigo-100 text-indigo-800`}>
+              Ongoing
+            </span>
+          );
+        case "completed":
+          return (
+            <span className={`${baseClasses} bg-green-100 text-green-800`}>
+              Completed
+            </span>
+          );
+        case "cancelled":
+          return (
+            <span className={`${baseClasses} bg-red-100 text-red-800`}>
+              Cancelled
+            </span>
+          );
+        default:
+          return (
+            <span className={`${baseClasses} bg-gray-100 text-gray-800`}>
+              {value}
+            </span>
+          );
+      }
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -61,28 +130,36 @@ export default function Matches({ bookings, loading }) {
                   <TableRow>
                     <TableHead>ID</TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>Phone</TableHead>
                     <TableHead>Sport</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Time Slot</TableHead>
+                    <TableHead>Date & Time</TableHead>
                     <TableHead>Booking Amount</TableHead>
                     <TableHead>Due Amount</TableHead>
                     <TableHead>Total Amount</TableHead>
+                    <TableHead>Payment Status</TableHead>
+                    <TableHead>Match Status</TableHead>
                     <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredBookings.map((b, index) => (
-                    <TableRow key={b.id}>
+                    <TableRow key={index}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell>{b.name}</TableCell>
-                      <TableCell>{b.phone}</TableCell>
+                      <TableCell>
+                        {b.name} <br />
+                        {b.phone}{" "}
+                      </TableCell>
                       <TableCell>{b.sport}</TableCell>
-                      <TableCell>{b.date}</TableCell>
-                      <TableCell>{b.timeSlot}</TableCell>
+                      <TableCell>
+                        {b.date} <br />
+                        {b.timeSlot}
+                      </TableCell>
                       <TableCell>{b.paymentAmount}</TableCell>
                       <TableCell>{b.dueAmount}</TableCell>
                       <TableCell>{b.totalAmount}</TableCell>
+                      <TableCell>
+                        {getBadge("payment", b.payment_status)}
+                      </TableCell>
+                      <TableCell>{getBadge("match", b.match_status)}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Button
@@ -109,9 +186,9 @@ export default function Matches({ bookings, loading }) {
 
             {/* Mobile Responsive Cards */}
             <div className="grid grid-cols-1 gap-4 md:hidden">
-              {filteredBookings.map((b) => (
+              {filteredBookings.map((b, index) => (
                 <Card
-                  key={b.id}
+                  key={index}
                   className="p-4 border border-gray-200 bg-gray-50 shadow-sm"
                 >
                   <div className="space-y-2 text-sm">
@@ -141,6 +218,14 @@ export default function Matches({ bookings, loading }) {
                     </p>
                     <p>
                       <strong>Total Amount:</strong> {b.totalAmount}
+                    </p>
+                    <p>
+                      <strong>Payment Status:</strong>{" "}
+                      {getBadge("payment", b.payment_status)}
+                    </p>
+                    <p>
+                      <strong>Match Status:</strong>{" "}
+                      {getBadge("match", b.match_status)}
                     </p>
                   </div>
                 </Card>
