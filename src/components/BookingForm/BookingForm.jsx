@@ -121,6 +121,11 @@ export default function BookingForm({
       return;
     }
 
+    if (!formData.referenceNumber) {
+      toast.error("Please provide a reference number!");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const totalAmount = slotPrice;
@@ -142,33 +147,54 @@ export default function BookingForm({
       paymentMethod: formData.paymentMethod,
     };
 
-    // inside your handleSubmit
-    try {
-      await fetch(
-        "https://script.google.com/macros/s/AKfycbwHLb8w5xrnRTTTTgIUpJzL4r9qj8_okjBGLrf60oP7s-Sihj9cU0zs_EOvqM3Uqo17/exec",
-        {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(bookingDetails),
-        }
-      );
+    const backendBookingData = {
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      sport: selectedSport,
+      date: date ? format(date, "PPP") : "",
+      timeSlot: selectedSlot,
+      paymentAmount,
+      totalAmount,
+      dueAmount,
+      payment_status:
+        paymentAmount === totalAmount
+          ? "paid"
+          : paymentAmount === 0
+          ? "unpaid"
+          : "partial",
+      payment_method: formData.paymentMethod,
+      referenceNumber: formData.referenceNumber,
+      match_status: "upcoming",
+    };
 
-      // Send invoice to user email if email exists
+    try {
+      const response = await fetch("http://localhost:5000/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(backendBookingData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to create booking");
+      }
+
+      // Optional: send email
       if (formData.email) {
         const templateParams = {
           user_name: formData.name,
           user_email: formData.email,
           booking_details: `
-            Sport: ${selectedSport}
-            Date: ${format(date, "PPP")}
-            Time: ${selectedSlot}
-            Total Amount: ৳${slotPrice}
-            Paid: ৳${formData.bookingAmount}
-            Due: ৳${slotPrice - Number(formData.bookingAmount)}
-            Payment Method: ${formData.paymentMethod}
-            Reference: ${formData.referenceNumber}
-          `,
+              Sport: ${selectedSport}
+              Date: ${format(date, "PPP")}
+              Time: ${selectedSlot}
+              Total Amount: ৳${slotPrice}
+              Paid: ৳${formData.bookingAmount}
+              Due: ৳${slotPrice - Number(formData.bookingAmount)}
+              Payment Method: ${formData.paymentMethod}
+              Reference: ${formData.referenceNumber}
+            `,
         };
 
         await emailjs.send(
@@ -181,12 +207,12 @@ export default function BookingForm({
       }
 
       toast.success("Booking submitted successfully!");
-
       if (fetchBookedSlots) fetchBookedSlots();
 
       setLastBooking(bookingDetails);
       setShowInvoice(true);
 
+      // Reset form
       setStep(1);
       setSelectedSlot(null);
       setSelectedSport("");
@@ -202,7 +228,7 @@ export default function BookingForm({
       });
     } catch (err) {
       console.error("Error submitting form:", err);
-      toast.error("Failed to submit booking or send invoice.");
+      toast.error(err.message || "Failed to submit booking.");
     } finally {
       setIsSubmitting(false);
     }

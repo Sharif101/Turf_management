@@ -1,4 +1,4 @@
-"use client"; // important to make it a Client Component
+"use client";
 import BookingForm from "@/components/BookingForm/BookingForm";
 import React, { useEffect, useState } from "react";
 
@@ -9,10 +9,9 @@ export default function Page() {
   const fetchBookedSlots = async () => {
     setLoading(true);
     try {
-      const res = await fetch(
-        "https://script.google.com/macros/s/AKfycbwHLb8w5xrnRTTTTgIUpJzL4r9qj8_okjBGLrf60oP7s-Sihj9cU0zs_EOvqM3Uqo17/exec",
-        { cache: "no-store" }
-      );
+      const res = await fetch("http://localhost:5000/api/bookings", {
+        cache: "no-store",
+      });
       const data = await res.json();
 
       const slots = data
