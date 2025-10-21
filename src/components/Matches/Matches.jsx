@@ -19,9 +19,9 @@ export default function Matches({ bookings, loading }) {
 
   const filteredBookings = bookings.filter(
     (b) =>
-      b.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.sport.toLowerCase().includes(searchTerm.toLowerCase())
+      b.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      b.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      b.sport?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -72,9 +72,9 @@ export default function Matches({ bookings, loading }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredBookings.map((b) => (
+                  {filteredBookings.map((b, index) => (
                     <TableRow key={b.id}>
-                      <TableCell>{b.id}</TableCell>
+                      <TableCell>{index + 1}</TableCell>
                       <TableCell>{b.name}</TableCell>
                       <TableCell>{b.phone}</TableCell>
                       <TableCell>{b.sport}</TableCell>
