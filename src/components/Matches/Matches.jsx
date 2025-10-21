@@ -13,9 +13,12 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2 } from "lucide-react";
+import Modal from "./Modal/Modal";
 
 export default function Matches({ bookings, loading }) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const filteredBookings = bookings.filter(
     (b) =>
@@ -166,9 +169,14 @@ export default function Matches({ bookings, loading }) {
                             variant="ghost"
                             size="icon"
                             className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            onClick={() => {
+                              setSelectedBooking(b); // set the booking to view/edit
+                              setModalOpen(true); // open modal
+                            }}
                           >
                             <Eye size={18} />
                           </Button>
+
                           <Button
                             variant="ghost"
                             size="icon"
@@ -234,6 +242,22 @@ export default function Matches({ bookings, loading }) {
           </>
         )}
       </Card>
+
+      {selectedBooking && (
+        <Modal
+          booking={selectedBooking}
+          isOpen={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onUpdate={(updated) => {
+            // Update bookings in the table
+            const updatedList = bookings.map((b) =>
+              b._id === updated._id ? updated : b
+            );
+            // if your bookings state comes from props, you might need to lift state up
+            // or trigger a refetch from API
+          }}
+        />
+      )}
     </div>
   );
 }
