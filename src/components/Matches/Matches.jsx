@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, Trash2 } from "lucide-react";
 import Modal from "./Modal/Modal";
 
-export default function Matches({ bookings, loading }) {
+export default function Matches({ bookings, loading, setIsTrue, isTrue }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -247,15 +247,9 @@ export default function Matches({ bookings, loading }) {
         <Modal
           booking={selectedBooking}
           isOpen={modalOpen}
+          setIsTrue={setIsTrue}
+          isTrue={isTrue}
           onClose={() => setModalOpen(false)}
-          onUpdate={(updated) => {
-            // Update bookings in the table
-            const updatedList = bookings.map((b) =>
-              b._id === updated._id ? updated : b
-            );
-            // if your bookings state comes from props, you might need to lift state up
-            // or trigger a refetch from API
-          }}
         />
       )}
     </div>

@@ -35,7 +35,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 
-export default function Modal({ booking, isOpen, onClose, onUpdate }) {
+export default function Modal({ booking, isOpen, onClose, setIsTrue, isTrue }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -73,10 +73,22 @@ export default function Modal({ booking, isOpen, onClose, onUpdate }) {
   }, [booking]);
 
   const handleChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => {
+      let updated = { ...prev, [field]: value };
+
+      // Auto-calculate dueAmount
+      if (field === "totalAmount" || field === "paymentAmount") {
+        const total =
+          parseFloat(field === "totalAmount" ? value : prev.totalAmount) || 0;
+        const paid =
+          parseFloat(field === "paymentAmount" ? value : prev.paymentAmount) ||
+          0;
+
+        updated.dueAmount = total - paid >= 0 ? total - paid : 0;
+      }
+
+      return updated;
+    });
   };
 
   const handleSave = async () => {
@@ -84,7 +96,7 @@ export default function Modal({ booking, isOpen, onClose, onUpdate }) {
       const res = await fetch(
         `http://localhost:5000/api/bookings/${booking._id}`,
         {
-          method: "PUT",
+          method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         }
@@ -94,8 +106,8 @@ export default function Modal({ booking, isOpen, onClose, onUpdate }) {
 
       const updatedBooking = await res.json();
       toast.success("Booking updated successfully!");
-      onUpdate(updatedBooking);
-      onClose();
+      setIsTrue(!isTrue);
+      // onClose();
     } catch (err) {
       console.error(err);
       toast.error("Error updating booking!");
@@ -419,6 +431,7 @@ export default function Modal({ booking, isOpen, onClose, onUpdate }) {
                     id="dueAmount"
                     type="number"
                     value={formData.dueAmount}
+                    disabled
                     onChange={(e) => handleChange("dueAmount", e.target.value)}
                     placeholder="0.00"
                     className="pl-10 bg-white dark:bg-slate-900 border-orange-200 dark:border-orange-800 focus:border-orange-500 dark:focus:border-orange-400"

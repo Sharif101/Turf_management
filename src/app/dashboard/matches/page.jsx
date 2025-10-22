@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 export default function MatchesPage() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isTrue, setIsTrue] = useState(false);
 
   const fetchBookings = async () => {
     setLoading(true);
@@ -27,11 +28,16 @@ export default function MatchesPage() {
 
   useEffect(() => {
     fetchBookings();
-  }, []);
+  }, [isTrue]);
 
   return (
     <DashboardLayout>
-      <Matches bookings={bookings} loading={loading} />
+      <Matches
+        bookings={bookings}
+        loading={loading}
+        setIsTrue={setIsTrue}
+        isTrue={isTrue}
+      />
     </DashboardLayout>
   );
 }
