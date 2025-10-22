@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,22 +10,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, Trash2 } from "lucide-react";
 import Modal from "./Modal/Modal";
+import SearchTab from "./SearchTab";
+import TableSkeleton from "../Resources/TableSkeleton";
 
-export default function Matches({ bookings, loading, setIsTrue, isTrue }) {
+export default function Matches({
+  bookings,
+  loading,
+  setIsTrue,
+  isTrue,
+  filters,
+  setFilters,
+}) {
+  // ---------------------------
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
-  const filteredBookings = bookings.filter(
-    (b) =>
-      b.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      b.sport?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // ---------------------------
 
   // Helper for status badges
   const getBadge = (type, value) => {
@@ -109,20 +113,25 @@ export default function Matches({ bookings, loading, setIsTrue, isTrue }) {
       {/* Table Section */}
       <Card className="p-6 bg-white border-gray-200">
         {/* Search Bar */}
-        <div className="mb-6">
-          <Input
-            type="text"
-            placeholder="Search by name, email or sport..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-md bg-gray-50 border-gray-300"
-          />
-        </div>
+        <SearchTab
+          searchTerm={filters.searchTerm}
+          setSearchTerm={(v) => setFilters((p) => ({ ...p, searchTerm: v }))}
+          searchField={filters.searchField}
+          setSearchField={(v) => setFilters((p) => ({ ...p, searchField: v }))}
+          paymentFilter={filters.paymentFilter}
+          setPaymentFilter={(v) =>
+            setFilters((p) => ({ ...p, paymentFilter: v }))
+          }
+          matchFilter={filters.matchFilter}
+          setMatchFilter={(v) => setFilters((p) => ({ ...p, matchFilter: v }))}
+          sportFilter={filters.sportFilter}
+          setSportFilter={(v) => setFilters((p) => ({ ...p, sportFilter: v }))}
+        />
 
         {/* Content */}
         {loading ? (
-          <p className="text-center py-12 text-gray-500">Loading bookings...</p>
-        ) : filteredBookings.length === 0 ? (
+          <TableSkeleton row={10} column={11} />
+        ) : bookings.length === 0 ? (
           <p className="text-center py-12 text-gray-500">No bookings found</p>
         ) : (
           <>
@@ -144,7 +153,7 @@ export default function Matches({ bookings, loading, setIsTrue, isTrue }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {filteredBookings.map((b, index) => (
+                  {bookings.map((b, index) => (
                     <TableRow key={index}>
                       <TableCell>{index + 1}</TableCell>
                       <TableCell>
@@ -194,7 +203,7 @@ export default function Matches({ bookings, loading, setIsTrue, isTrue }) {
 
             {/* Mobile Responsive Cards */}
             <div className="grid grid-cols-1 gap-4 md:hidden">
-              {filteredBookings.map((b, index) => (
+              {bookings.map((b, index) => (
                 <Card
                   key={index}
                   className="p-4 border border-gray-200 bg-gray-50 shadow-sm"
