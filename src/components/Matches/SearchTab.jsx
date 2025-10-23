@@ -23,6 +23,10 @@ export default function SearchTab({
   setMatchFilter,
   sportFilter,
   setSportFilter,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
 }) {
   const [showAllFilters, setShowAllFilters] = useState(false);
 
@@ -32,6 +36,8 @@ export default function SearchTab({
     setPaymentFilter("all");
     setMatchFilter("all");
     setSportFilter("all");
+    setStartDate("");
+    setEndDate("");
   };
 
   const hasActiveFilters =
@@ -39,7 +45,9 @@ export default function SearchTab({
     searchField !== "all" ||
     paymentFilter !== "all" ||
     matchFilter !== "all" ||
-    sportFilter !== "all";
+    sportFilter !== "all" ||
+    startDate ||
+    endDate;
 
   return (
     <div className="space-y-4 bg-white">
@@ -59,7 +67,7 @@ export default function SearchTab({
             className="pl-10 bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-indigo-500"
           />
           {/* Search Field Selector */}
-          <div className="w-40 absolute right-0 top-1/2 -translate-y-1/2">
+          {/* <div className="w-40 absolute right-0 top-1/2 -translate-y-1/2">
             <Select value={searchField} onValueChange={setSearchField}>
               <SelectTrigger className="bg-slate-50 border-slate-200 text-slate-700 text-sm h-9">
                 <SelectValue placeholder="Search by" />
@@ -71,7 +79,7 @@ export default function SearchTab({
                 <SelectItem value="phone">Phone</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -134,6 +142,7 @@ export default function SearchTab({
             <SelectContent>
               <SelectItem value="all">All Sports</SelectItem>
               <SelectItem value="football">Football</SelectItem>
+              <SelectItem value="criket">Criket</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -152,4 +161,3 @@ export default function SearchTab({
     </div>
   );
 }
-//check data base

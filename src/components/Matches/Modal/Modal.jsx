@@ -186,6 +186,12 @@ export default function Modal({ booking, isOpen, onClose, setIsTrue, isTrue }) {
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                 Review and update booking information
               </p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-5 ">
+                Created At: {new Date(booking.createdAt)?.toLocaleString()}
+              </p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                Updated At: {new Date(booking.updatedAt)?.toLocaleString()}
+              </p>
             </div>
             <div className="flex flex-col gap-2 items-end">
               {formData.payment_status &&

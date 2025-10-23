@@ -126,6 +126,10 @@ export default function Matches({
           setMatchFilter={(v) => setFilters((p) => ({ ...p, matchFilter: v }))}
           sportFilter={filters.sportFilter}
           setSportFilter={(v) => setFilters((p) => ({ ...p, sportFilter: v }))}
+          startDate={filters.startDate}
+          setStartDate={(v) => setFilters((p) => ({ ...p, startDate: v }))}
+          endDate={filters.endDate}
+          setEndDate={(v) => setFilters((p) => ({ ...p, endDate: v }))}
         />
 
         {/* Content */}
