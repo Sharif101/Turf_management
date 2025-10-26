@@ -15,6 +15,7 @@ import { Eye, Trash2 } from "lucide-react";
 import Modal from "./Modal/Modal";
 import SearchTab from "./SearchTab";
 import TableSkeleton from "../Resources/TableSkeleton";
+import DeleteConfirmationModal from "./Modal/DeleteConfirmationModal";
 
 export default function Matches({
   bookings,
@@ -28,6 +29,9 @@ export default function Matches({
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedBookingToDelete, setSelectedBookingToDelete] = useState(null);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // ---------------------------
 
@@ -97,6 +101,36 @@ export default function Matches({
             </span>
           );
       }
+    }
+  };
+
+  // ---------------------------
+  const handleDeleteBooking = async () => {
+    if (!selectedBookingToDelete) return;
+
+    try {
+      setIsDeleting(true);
+
+      const res = await fetch(
+        `http://localhost:5000/api/bookings/${selectedBookingToDelete._id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to delete booking");
+      }
+
+      setIsTrue(!isTrue);
+
+      setDeleteModalOpen(false);
+      setSelectedBookingToDelete(null);
+    } catch (error) {
+      console.error("Error deleting booking:", error);
+      alert("Failed to delete booking. Please try again.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -183,8 +217,8 @@ export default function Matches({
                             size="icon"
                             className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
                             onClick={() => {
-                              setSelectedBooking(b); // set the booking to view/edit
-                              setModalOpen(true); // open modal
+                              setSelectedBooking(b);
+                              setModalOpen(true);
                             }}
                           >
                             <Eye size={18} />
@@ -194,6 +228,10 @@ export default function Matches({
                             variant="ghost"
                             size="icon"
                             className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => {
+                              setSelectedBookingToDelete(b);
+                              setDeleteModalOpen(true);
+                            }}
                           >
                             <Trash2 size={18} />
                           </Button>
@@ -263,6 +301,19 @@ export default function Matches({
           setIsTrue={setIsTrue}
           isTrue={isTrue}
           onClose={() => setModalOpen(false)}
+        />
+      )}
+
+      {selectedBookingToDelete && (
+        <DeleteConfirmationModal
+          booking={selectedBookingToDelete}
+          isOpen={deleteModalOpen}
+          onClose={() => {
+            setDeleteModalOpen(false);
+            setSelectedBookingToDelete(null);
+          }}
+          onConfirm={handleDeleteBooking}
+          isDeleting={isDeleting}
         />
       )}
     </div>
