@@ -55,6 +55,8 @@ export default function MatchesPage() {
     fetchBookings();
   }, [isTrue, filters]);
 
+  console.log({ filters });
+
   return (
     <DashboardLayout>
       <Matches

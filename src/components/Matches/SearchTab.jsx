@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Search, X } from "lucide-react";
+import { Calendar, Search, X } from "lucide-react";
 
 export default function SearchTab({
   searchTerm,
@@ -145,6 +145,45 @@ export default function SearchTab({
               <SelectItem value="criket">Criket</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+
+        {/* Start Date Filter */}
+        <div className="relative flex items-center gap-2 px-3 py-1 bg-slate-50 border border-slate-200 rounded-md hover:border-slate-300 transition-colors">
+          <Calendar size={18} className="text-slate-400 flex-shrink-0" />
+
+          <div className="relative w-32">
+            {!startDate && (
+              <span className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">
+                Start Date
+              </span>
+            )}
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className={`bg-transparent border-0 text-slate-700 text-sm focus:outline-none focus:ring-0 w-full ${
+                !startDate ? "text-transparent" : ""
+              }`}
+            />
+          </div>
+
+          <span className="text-slate-300">—</span>
+
+          <div className="relative w-32">
+            {!endDate && (
+              <span className="absolute left-0 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none">
+                End Date
+              </span>
+            )}
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className={`bg-transparent border-0 text-slate-700 text-sm focus:outline-none focus:ring-0 w-full ${
+                !endDate ? "text-transparent" : ""
+              }`}
+            />
+          </div>
         </div>
 
         {/* Clear Filters */}
