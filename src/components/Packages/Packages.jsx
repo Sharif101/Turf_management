@@ -3,6 +3,16 @@
 import { useState } from "react";
 import { Trash2, Edit2, Plus } from "lucide-react";
 import CreatePackageModal from "./Modal/CreatePackageModal";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 
 export default function Packages({ packages, setPackages, loading }) {
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -84,92 +94,85 @@ export default function Packages({ packages, setPackages, loading }) {
         </button>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Package Name
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Duration
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Price
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Description
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {packages.map((pkg) => (
-                <tr key={pkg.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    {pkg.name}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {pkg.duration}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-                    {pkg.price}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
-                    {pkg.description}
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                        pkg.status
-                      )}`}
-                    >
-                      {pkg.status.charAt(0).toUpperCase() + pkg.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => handleEditClick(pkg)}
-                        className="text-indigo-600 hover:text-indigo-700 transition-colors"
-                        title="Edit package"
-                      >
-                        <Edit2 size={18} />
-                      </button>
-                      <button
-                        onClick={() => handleDeleteClick(pkg)}
-                        className="text-red-600 hover:text-red-700 transition-colors"
-                        title="Delete package"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* Table Section */}
+      <Card className="p-6 bg-white border-gray-200">
+        <div className="hidden md:block overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Package Name</TableHead>
+                <TableHead>Duration (Days)</TableHead>
+                <TableHead>Price (৳)</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
+              </TableRow>
+            </TableHeader>
 
-        {packages.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-500 mb-4">No packages found</p>
-            <button
-              onClick={handleCreateClick}
-              className="text-indigo-600 hover:text-indigo-700 font-medium"
-            >
-              Create your first package
-            </button>
-          </div>
-        )}
-      </div>
+            <TableBody>
+              {packages.length > 0 ? (
+                packages.map((pkg, index) => (
+                  <TableRow
+                    key={pkg._id || index}
+                    className="hover:bg-gray-50 transition-colors"
+                  >
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell className="font-medium text-slate-600">
+                      {pkg.name}
+                    </TableCell>
+                    <TableCell>{pkg.duration}</TableCell>
+                    <TableCell className="font-semibold text-slate-600">
+                      ৳ {pkg.price}
+                    </TableCell>
+                    <TableCell className="max-w-xs truncate text-slate-600">
+                      {pkg.description || "—"}
+                    </TableCell>
+                    <TableCell>
+                      <span>{pkg.status}</span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          onClick={() => handleEditClick(pkg)}
+                          title="Edit package"
+                        >
+                          <Edit2 size={18} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => handleDeleteClick(pkg)}
+                          title="Delete package"
+                        >
+                          <Trash2 size={18} />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan="7" className="text-center py-10">
+                    <p className="text-gray-500 mb-4">No packages found</p>
+                    <Button
+                      variant="link"
+                      className="text-indigo-600 hover:text-indigo-700 font-medium"
+                      onClick={handleCreateClick}
+                    >
+                      Create your first package
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      </Card>
 
       {/* Modals */}
       <CreatePackageModal
