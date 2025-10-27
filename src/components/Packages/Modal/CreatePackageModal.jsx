@@ -1,7 +1,32 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X } from "lucide-react";
+import {
+  X,
+  Package,
+  Calendar,
+  DollarSign,
+  FileText,
+  CheckCircle2,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function CreatePackageModal({
   isOpen,
@@ -39,6 +64,13 @@ export default function CreatePackageModal({
     }));
   };
 
+  const handleStatusChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      status: value,
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (
@@ -51,124 +83,148 @@ export default function CreatePackageModal({
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-lg max-w-md w-full">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[625px] p-0 gap-0">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-bold text-gray-900">
-            {editingPackage ? "Edit Package" : "Create Package"}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
-          >
-            <X size={24} />
-          </button>
-        </div>
+        <DialogHeader className="px-6 py-4 border-b">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-lg">
+                <Package className="w-5 h-5 text-primary" />
+              </div>
+              <DialogTitle className="text-xl font-semibold">
+                {editingPackage ? "Edit Package" : "Create New Package"}
+              </DialogTitle>
+            </div>
+          </div>
+        </DialogHeader>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Package Name */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
-              Package Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="e.g., Basic Package"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="space-y-6">
+            {/* Package Name */}
+            <div className="space-y-3">
+              <Label
+                htmlFor="name"
+                className="flex items-center gap-2 text-sm font-medium"
+              >
+                <Package className="w-4 h-4 text-muted-foreground" />
+                Package Name
+              </Label>
+              <Input
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="e.g., Premium Business Package"
+                className="w-full"
+                required
+              />
+            </div>
+
+            {/* Duration and Price Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Duration */}
+              <div className="space-y-3">
+                <Label
+                  htmlFor="duration"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
+                  <Calendar className="w-4 h-4 text-muted-foreground" />
+                  Duration
+                </Label>
+                <Input
+                  id="duration"
+                  name="duration"
+                  value={formData.duration}
+                  onChange={handleChange}
+                  placeholder="e.g., 3 Months"
+                  required
+                />
+              </div>
+
+              {/* Price */}
+              <div className="space-y-3">
+                <Label
+                  htmlFor="price"
+                  className="flex items-center gap-2 text-sm font-medium"
+                >
+                  <DollarSign className="w-4 h-4 text-muted-foreground" />
+                  Price
+                </Label>
+                <Input
+                  id="price"
+                  name="price"
+                  value={formData.price}
+                  onChange={handleChange}
+                  placeholder="e.g., $99.99"
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="space-y-3">
+              <Label
+                htmlFor="description"
+                className="flex items-center gap-2 text-sm font-medium"
+              >
+                <FileText className="w-4 h-4 text-muted-foreground" />
+                Description
+              </Label>
+              <Textarea
+                id="description"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                placeholder="Describe what's included in this package..."
+                rows="4"
+                className="resize-none"
+                required
+              />
+            </div>
+
+            {/* Status */}
+            <div className="space-y-3">
+              <Label
+                htmlFor="status"
+                className="flex items-center gap-2 text-sm font-medium"
+              >
+                <CheckCircle2 className="w-4 h-4 text-muted-foreground" />
+                Status
+              </Label>
+              <Select
+                value={formData.status}
+                onValueChange={handleStatusChange}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
-          {/* Duration */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
-              Duration
-            </label>
-            <input
-              type="text"
-              name="duration"
-              value={formData.duration}
-              onChange={handleChange}
-              placeholder="e.g., 1 Month"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-          </div>
-
-          {/* Price */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
-              Price
-            </label>
-            <input
-              type="text"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              placeholder="e.g., $29.99"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              placeholder="Describe the package features..."
-              rows="3"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
-              required
-            />
-          </div>
-
-          {/* Status */}
-          <div>
-            <label className="block text-sm font-medium text-gray-900 mb-1">
-              Status
-            </label>
-            <select
-              name="status"
-              value={formData.status}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-3 pt-4">
-            <button
+          {/* Action Buttons */}
+          <div className="flex gap-3 mt-8 pt-6 border-t">
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+              className="flex-1"
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-            >
-              {editingPackage ? "Update" : "Create"}
-            </button>
+            </Button>
+            <Button type="submit" className="flex-1">
+              {editingPackage ? "Update Package" : "Create Package"}
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
