@@ -31,6 +31,7 @@ export default function DashboardLayout({ children }) {
   const navItems = [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Match List", path: "/dashboard/matches", icon: ListChecks },
+    { name: "Package List", path: "/dashboard/packages", icon: ListChecks },
   ];
 
   return (
