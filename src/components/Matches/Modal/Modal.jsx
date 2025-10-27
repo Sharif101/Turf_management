@@ -34,6 +34,13 @@ import {
   XCircle,
   AlertCircle,
 } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import useFormattedDate from "@/hooks/useFormattedDate";
+import DatePicker from "@/hooks/DatePicker";
 
 export default function Modal({ booking, isOpen, onClose, setIsTrue, isTrue }) {
   const [formData, setFormData] = useState({
@@ -300,7 +307,7 @@ export default function Modal({ booking, isOpen, onClose, setIsTrue, isTrue }) {
               Booking Schedule
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label
                   htmlFor="date"
                   className="text-sm font-medium text-slate-700 dark:text-slate-300"
@@ -321,6 +328,13 @@ export default function Modal({ booking, isOpen, onClose, setIsTrue, isTrue }) {
                     className="pl-10 bg-white dark:bg-slate-900 border-green-200 dark:border-green-800 focus:border-green-500 dark:focus:border-green-400"
                   />
                 </div>
+              </div> */}
+
+              <div className="space-y-2">
+                <DatePicker
+                  value={formData.date}
+                  onChange={(formatted) => handleChange("date", formatted)}
+                />
               </div>
 
               <div className="space-y-2">
