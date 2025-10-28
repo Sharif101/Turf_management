@@ -8,6 +8,8 @@ import {
   DollarSign,
   FileText,
   CheckCircle2,
+  Users,
+  ListChecks,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -39,18 +40,25 @@ export default function CreatePackageModal({
     duration: "",
     price: "",
     description: "",
+    type: "individual",
+    teamSizeLimit: 1,
     status: "active",
   });
 
   useEffect(() => {
     if (editingPackage) {
-      setFormData(editingPackage);
+      // Handle features array when editing
+      setFormData({
+        ...editingPackage,
+      });
     } else {
       setFormData({
         name: "",
         duration: "",
         price: "",
         description: "",
+        type: "individual",
+        teamSizeLimit: 1,
         status: "active",
       });
     }
@@ -71,15 +79,27 @@ export default function CreatePackageModal({
     }));
   };
 
+  const handleTypeChange = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      type: value,
+      teamSizeLimit: value === "team" ? 5 : 1, // default 5 if team
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (
       formData.name &&
       formData.duration &&
       formData.price &&
       formData.description
     ) {
-      onSave(formData);
+      const preparedData = {
+        ...formData,
+      };
+      onSave(preparedData);
     }
   };
 
@@ -123,9 +143,8 @@ export default function CreatePackageModal({
               />
             </div>
 
-            {/* Duration and Price Row */}
+            {/* Duration & Price */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Duration */}
               <div className="space-y-3">
                 <Label
                   htmlFor="duration"
@@ -139,12 +158,11 @@ export default function CreatePackageModal({
                   name="duration"
                   value={formData.duration}
                   onChange={handleChange}
-                  placeholder="e.g., 3 Months"
+                  placeholder="e.g., 30 days"
                   required
                 />
               </div>
 
-              {/* Price */}
               <div className="space-y-3">
                 <Label
                   htmlFor="price"
@@ -158,11 +176,50 @@ export default function CreatePackageModal({
                   name="price"
                   value={formData.price}
                   onChange={handleChange}
-                  placeholder="e.g., $99.99"
+                  placeholder="e.g., 999"
                   required
                 />
               </div>
             </div>
+
+            {/* Type (Individual / Team) */}
+            <div className="space-y-3">
+              <Label
+                htmlFor="type"
+                className="flex items-center gap-2 text-sm font-medium"
+              >
+                <Users className="w-4 h-4 text-muted-foreground" />
+                Membership Type
+              </Label>
+              <Select value={formData.type} onValueChange={handleTypeChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select membership type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="individual">Individual</SelectItem>
+                  <SelectItem value="team">Team</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Team Size (only if team) */}
+            {formData.type === "team" && (
+              <div className="space-y-3">
+                <Label htmlFor="teamSizeLimit" className="text-sm font-medium">
+                  Team Size Limit
+                </Label>
+                <Input
+                  id="teamSizeLimit"
+                  name="teamSizeLimit"
+                  type="number"
+                  value={formData.teamSizeLimit}
+                  onChange={handleChange}
+                  placeholder="e.g., 5"
+                  min="1"
+                  required
+                />
+              </div>
+            )}
 
             {/* Description */}
             <div className="space-y-3">
