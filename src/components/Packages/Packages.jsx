@@ -107,12 +107,20 @@ export default function Packages({ packages, setPackages, loading }) {
   };
 
   return (
-    <div className="p-6">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold">Package Plans</h2>
-        <Button onClick={() => setCreateModalOpen(true)}>
-          <PlusCircle className="w-4 h-4 mr-2" />
+      <div className="flex justify-between items-center mb-6 p-4 bg-white shadow-sm rounded-md border border-gray-200">
+        <div>
+          <h2 className="text-[20px] font-semibold text-gray-800">
+            Package Plans
+          </h2>
+          <p className="text-gray-500 mt-1">Manage all your bookings here</p>
+        </div>
+        <Button
+          onClick={() => setCreateModalOpen(true)}
+          className="flex items-center bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-200"
+        >
+          <PlusCircle className="w-5 h-5 mr-2" />
           Create Package
         </Button>
       </div>
