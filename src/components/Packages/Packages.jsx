@@ -1,28 +1,99 @@
 "use client";
 
-import { useState } from "react";
-import { Trash2, Edit2, Plus } from "lucide-react";
-import CreatePackageModal from "./Modal/CreatePackageModal";
+import React, { useState } from "react";
 import {
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
+  TableBody,
   TableRow,
+  TableHead,
+  TableCell,
 } from "@/components/ui/table";
-import { Button } from "../ui/button";
-import { Card } from "../ui/card";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { PlusCircle, Pencil, Trash2, Edit2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "react-toastify";
+import CreatePackageModal from "./Modal/CreatePackageModal";
+import TableSkeleton from "../Resources/TableSkeleton";
 
 export default function Packages({ packages, setPackages, loading }) {
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [editingPackage, setEditingPackage] = useState(null);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState(null);
-  const [editingPackage, setEditingPackage] = useState(null);
 
-  const handleCreateClick = () => {
-    setEditingPackage(null);
-    setCreateModalOpen(true);
+  // Create / Update handler
+  const handleSavePackage = async (packageData) => {
+    try {
+      const apiUrl = editingPackage
+        ? `http://localhost:5000/api/package-plans/${editingPackage._id}`
+        : `http://localhost:5000/api/package-plans`;
+
+      const method = editingPackage ? "PATCH" : "POST";
+
+      const res = await fetch(apiUrl, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(packageData),
+      });
+
+      if (!res.ok) throw new Error("Failed to save package");
+
+      const savedPackage = await res.json();
+
+      if (editingPackage) {
+        setPackages((prev) =>
+          prev.map((pkg) =>
+            pkg._id === editingPackage._id ? savedPackage : pkg
+          )
+        );
+        toast("Package updated successfully ✅");
+      } else {
+        // add new
+        setPackages((prev) => [...prev, savedPackage]);
+        toast("New package created 🎉");
+      }
+
+      setCreateModalOpen(false);
+      setEditingPackage(null);
+    } catch (error) {
+      console.error("Error saving package:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save package. Try again later.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeletePackage = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/package-plans/${selectedPackage._id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to delete package");
+
+      setPackages((prev) =>
+        prev.filter((pkg) => pkg._id !== selectedPackage._id)
+      );
+      toast("Package deleted successfully 🗑️");
+
+      setDeleteModalOpen(false);
+      setSelectedPackage(null);
+    } catch (error) {
+      console.error("Error deleting package:", error);
+      toast("Failed to delete package.");
+    }
   };
 
   const handleEditClick = (pkg) => {
@@ -35,175 +106,118 @@ export default function Packages({ packages, setPackages, loading }) {
     setDeleteModalOpen(true);
   };
 
-  const handleSavePackage = (packageData) => {
-    if (editingPackage) {
-      // Update existing package
-      setPackages(
-        packages.map((pkg) =>
-          pkg.id === editingPackage.id ? { ...pkg, ...packageData } : pkg
-        )
-      );
-    } else {
-      // Create new package
-      const newPackage = {
-        id: Math.max(...packages.map((p) => p.id), 0) + 1,
-        ...packageData,
-      };
-      setPackages([...packages, newPackage]);
-    }
-    setCreateModalOpen(false);
-  };
-
-  const handleDeletePackage = () => {
-    setPackages(packages.filter((pkg) => pkg.id !== selectedPackage.id));
-    setDeleteModalOpen(false);
-    setSelectedPackage(null);
-  };
-
-  const getStatusColor = (status) => {
-    return status === "active"
-      ? "bg-green-100 text-green-800"
-      : "bg-gray-100 text-gray-800";
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading packages...</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-6">
+    <div className="p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Packages</h1>
-          <p className="text-gray-600 mt-1">Manage your service packages</p>
-        </div>
-        <button
-          onClick={handleCreateClick}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
-        >
-          <Plus size={20} />
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">Package Plans</h2>
+        <Button onClick={() => setCreateModalOpen(true)}>
+          <PlusCircle className="w-4 h-4 mr-2" />
           Create Package
-        </button>
+        </Button>
       </div>
 
-      {/* Table Section */}
+      {/* 🔹 Table Section */}
       <Card className="p-6 bg-white border-gray-200">
         <div className="hidden md:block overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Package Name</TableHead>
-                <TableHead>Duration (Days)</TableHead>
-                <TableHead>Price (৳)</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {packages.length > 0 ? (
-                packages.map((pkg, index) => (
-                  <TableRow
-                    key={pkg._id || index}
-                    className="hover:bg-gray-50 transition-colors"
-                  >
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell className="font-medium text-slate-600">
-                      {pkg.name}
-                    </TableCell>
-                    <TableCell>{pkg.duration}</TableCell>
-                    <TableCell className="font-semibold text-slate-600">
-                      ৳ {pkg.price}
-                    </TableCell>
-                    <TableCell className="max-w-xs truncate text-slate-600">
-                      {pkg.description || "—"}
-                    </TableCell>
-                    <TableCell>
-                      <span>{pkg.status}</span>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                          onClick={() => handleEditClick(pkg)}
-                          title="Edit package"
-                        >
-                          <Edit2 size={18} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                          onClick={() => handleDeleteClick(pkg)}
-                          title="Delete package"
-                        >
-                          <Trash2 size={18} />
-                        </Button>
-                      </div>
-                    </TableCell>
+          {loading ? (
+            <TableSkeleton row={5} columns={6} />
+          ) : packages.length === 0 ? (
+            <p className="text-center py-12 text-gray-500">No bookings found</p>
+          ) : (
+            <>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID</TableHead>
+                    <TableHead>Package Name</TableHead>
+                    <TableHead>Duration (Days)</TableHead>
+                    <TableHead>Price (৳)</TableHead>
+                    <TableHead>Description</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan="7" className="text-center py-10">
-                    <p className="text-gray-500 mb-4">No packages found</p>
-                    <Button
-                      variant="link"
-                      className="text-indigo-600 hover:text-indigo-700 font-medium"
-                      onClick={handleCreateClick}
+                </TableHeader>
+                <TableBody>
+                  {packages.map((pkg, index) => (
+                    <TableRow
+                      key={pkg._id}
+                      className="hover:bg-gray-50 transition-colors"
                     >
-                      Create your first package
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell className="font-medium text-slate-600">
+                        {pkg.name}
+                      </TableCell>
+                      <TableCell>{pkg.duration}</TableCell>
+                      <TableCell className="font-semibold text-slate-600">
+                        ৳ {pkg.price}
+                      </TableCell>
+                      <TableCell className="max-w-xs truncate text-slate-600">
+                        {pkg.description || "—"}
+                      </TableCell>
+                      <TableCell>
+                        <span>{pkg.status}</span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-2 justify-start">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            onClick={() => handleEditClick(pkg)}
+                            title="Edit package"
+                          >
+                            <Edit2 size={17} />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                            onClick={() => handleDeleteClick(pkg)}
+                            title="Delete package"
+                          >
+                            <Trash2 size={17} />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </>
+          )}
         </div>
       </Card>
 
-      {/* Modals */}
       <CreatePackageModal
         isOpen={createModalOpen}
-        onClose={() => setCreateModalOpen(false)}
+        onClose={() => {
+          setCreateModalOpen(false);
+          setEditingPackage(null);
+        }}
         onSave={handleSavePackage}
         editingPackage={editingPackage}
       />
 
-      {/* <DeleteConfirmationModal
-        isOpen={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-        onConfirm={handleDeletePackage}
-        title="Delete Package"
-        message={`Are you sure you want to delete "${selectedPackage?.name}"? This action cannot be undone.`}
-        itemDetails={
-          selectedPackage && (
-            <div className="space-y-2 text-sm">
-              <p>
-                <span className="font-medium">Name:</span> {selectedPackage.name}
-              </p>
-              <p>
-                <span className="font-medium">Price:</span> {selectedPackage.price}
-              </p>
-              <p>
-                <span className="font-medium">Duration:</span> {selectedPackage.duration}
-              </p>
-            </div>
-          )
-        }
-      /> */}
+      <Dialog open={deleteModalOpen} onOpenChange={setDeleteModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Delete Package</DialogTitle>
+          </DialogHeader>
+          <p>
+            Are you sure you want to delete{" "}
+            <strong>{selectedPackage?.name}</strong>?
+          </p>
+          <div className="flex justify-end gap-3 mt-6">
+            <Button variant="outline" onClick={() => setDeleteModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleDeletePackage}>
+              Delete
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
