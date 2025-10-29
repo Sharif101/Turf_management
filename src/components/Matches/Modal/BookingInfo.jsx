@@ -71,51 +71,60 @@ We’re excited to see you at Mohakash Turf.`;
         {/* Ticket content to capture */}
         <div
           ref={ticketRef}
-          className="p-4 bg-white rounded shadow-md space-y-3 text-sm text-gray-700 dark:text-gray-300"
+          className="p-6 bg-gradient-to-br from-blue-50 via-white to-indigo-50 rounded-lg shadow-lg space-y-4 text-sm"
         >
           <DialogHeader>
-            <DialogTitle>🎟️ Mohakash Turf – Booking Confirmation</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-blue-700">
+              🎟️ Mohakash Turf – Booking Confirmation
+            </DialogTitle>
           </DialogHeader>
+
           {/* Customer Info */}
-          <div className="border-b pb-2">
-            <p>
-              <span className="font-semibold">Customer Name :</span>{" "}
+          <div className="border-b border-gray-200 pb-3 space-y-1">
+            <p className="text-gray-700">
+              <span className="font-semibold text-gray-900">
+                Customer Name :
+              </span>{" "}
               {booking.name}
             </p>
-            <p>
-              <span className="font-semibold">Phone :</span> {booking.phone}
+            <p className="text-gray-700">
+              <span className="font-semibold text-gray-900">Phone :</span>{" "}
+              {booking.phone}
             </p>
-            <p>
-              <span className="font-semibold">Address :</span>{" "}
+            <p className="text-gray-700">
+              <span className="font-semibold text-gray-900">Address :</span>{" "}
               {booking.address || "N/A"}
             </p>
           </div>
 
           {/* Booking Info */}
           <div className="space-y-2 pt-2">
-            <p>
-              <span className="font-semibold">Sprot : </span> {booking.sport}
+            <p className="text-gray-700">
+              <span className="font-semibold text-gray-900">Sport : </span>{" "}
+              {booking.sport}
             </p>
-            <p>
-              <span className="font-semibold">Slot price :</span>{" "}
+            <p className="text-gray-700">
+              <span className="font-semibold text-gray-900">Slot price :</span>{" "}
               {booking.totalAmount}
             </p>
-            <p>
-              <span className="font-semibold">Advanced :</span>{" "}
+            <p className="text-gray-700">
+              <span className="font-semibold text-gray-900">Advanced :</span>{" "}
               {booking.paymentAmount}
             </p>
-            <p>
-              <span className="font-semibold">Due :</span> {booking.dueAmount}
+            <p className="text-gray-700">
+              <span className="font-semibold text-gray-900">Due :</span>{" "}
+              {booking.dueAmount}
             </p>
-            <p>
-              <span className="font-semibold">Date & Time :</span>{" "}
+            <p className="text-gray-700">
+              <span className="font-semibold text-gray-900">Date & Time :</span>{" "}
               {booking.date} ({booking.timeSlot})
             </p>
-            <p className="pt-2">
+            <p className="pt-2 text-gray-600">
               Please arrive 10–15 minutes before your game time.
             </p>
-            <p>
-              We’re excited to see you at <strong>Mohakash Turf</strong>!
+            <p className="text-gray-700">
+              We're excited to see you at{" "}
+              <strong className="text-blue-700">Mohakash Turf</strong>!
             </p>
           </div>
         </div>
