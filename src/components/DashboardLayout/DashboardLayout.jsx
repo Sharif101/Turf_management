@@ -32,6 +32,11 @@ export default function DashboardLayout({ children }) {
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Match List", path: "/dashboard/matches", icon: ListChecks },
     { name: "Package List", path: "/dashboard/packages", icon: ListChecks },
+    {
+      name: "Memberships List",
+      path: "/dashboard/memberships",
+      icon: ListChecks,
+    },
   ];
 
   return (
