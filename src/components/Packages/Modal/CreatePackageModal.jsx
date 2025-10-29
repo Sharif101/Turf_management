@@ -102,10 +102,11 @@ export default function CreatePackageModal({
       onSave(preparedData);
     }
   };
+  console.log({ formData });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[625px] p-0 gap-0">
+      <DialogContent className="sm:max-w-[625px] p-0 gap-0 max-h-[85vh] overflow-y-auto">
         {/* Header */}
         <DialogHeader className="px-6 py-4 border-b">
           <div className="flex items-center justify-between">
@@ -118,6 +119,18 @@ export default function CreatePackageModal({
               </DialogTitle>
             </div>
           </div>
+          {editingPackage ? (
+            <>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-5 ">
+                Created At: {new Date(formData.createdAt)?.toLocaleString()}
+              </p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                Updated At: {new Date(formData.updatedAt)?.toLocaleString()}
+              </p>
+            </>
+          ) : (
+            ""
+          )}
         </DialogHeader>
 
         {/* Form */}
