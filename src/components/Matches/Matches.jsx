@@ -11,11 +11,12 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, Trash2 } from "lucide-react";
+import { Eye, Send, Trash2 } from "lucide-react";
 import Modal from "./Modal/Modal";
 import SearchTab from "./SearchTab";
 import TableSkeleton from "../Resources/TableSkeleton";
 import DeleteConfirmationModal from "./Modal/DeleteConfirmationModal";
+import BookingInfo from "./Modal/BookingInfo";
 
 export default function Matches({
   bookings,
@@ -34,6 +35,8 @@ export default function Matches({
   const [isDeleting, setIsDeleting] = useState(false);
 
   // ---------------------------
+  const [viewInfoOpen, setViewInfoOpen] = useState(false);
+  const [infoBooking, setInfoBooking] = useState(null);
 
   // Helper for status badges
   const getBadge = (type, value) => {
@@ -211,7 +214,7 @@ export default function Matches({
                       </TableCell>
                       <TableCell>{getBadge("match", b.match_status)}</TableCell>
                       <TableCell>
-                        <div className="flex gap-2">
+                        <div className="flex gap-1">
                           <Button
                             variant="ghost"
                             size="icon"
@@ -222,6 +225,18 @@ export default function Matches({
                             }}
                           >
                             <Eye size={18} />
+                          </Button>
+
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            onClick={() => {
+                              setInfoBooking(b);
+                              setViewInfoOpen(true);
+                            }}
+                          >
+                            <Send size={18} />
                           </Button>
 
                           <Button
@@ -316,6 +331,12 @@ export default function Matches({
           isDeleting={isDeleting}
         />
       )}
+
+      <BookingInfo
+        open={viewInfoOpen}
+        onClose={() => setViewInfoOpen(false)}
+        booking={infoBooking}
+      />
     </div>
   );
 }
