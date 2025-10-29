@@ -102,7 +102,6 @@ export default function CreatePackageModal({
       onSave(preparedData);
     }
   };
-  console.log({ formData });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

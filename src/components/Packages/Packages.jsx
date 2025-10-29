@@ -164,8 +164,26 @@ export default function Packages({ packages, setPackages, loading }) {
                         {pkg.description || "—"}
                       </TableCell>
                       <TableCell>
-                        <span>{pkg.status}</span>
+                        <span
+                          className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
+                                        ${
+                                          pkg.status === "active"
+                                            ? "bg-green-100 text-green-700"
+                                            : "bg-red-100 text-red-700"
+                                        }`}
+                        >
+                          <span
+                            className={`w-2 h-2 rounded-full mr-2 ${
+                              pkg.status === "active"
+                                ? "bg-green-500"
+                                : "bg-red-500"
+                            }`}
+                          ></span>
+                          {pkg.status.charAt(0).toUpperCase() +
+                            pkg.status.slice(1)}
+                        </span>
                       </TableCell>
+
                       <TableCell>
                         <div className="flex gap-2 justify-start">
                           <Button
