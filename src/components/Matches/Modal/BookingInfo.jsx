@@ -9,7 +9,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, Download } from "lucide-react";
+import { Copy, Download, MessageCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 
@@ -62,7 +62,23 @@ We’re excited to see you at Mohakash Turf.`;
     link.href = dataURL;
     link.download = `Booking_${booking.name}_${booking.date}.png`;
     link.click();
-    toast.success("downloaded!");
+    toast.success("Ticket downloaded!");
+  };
+
+  const handleWhatsApp = () => {
+    if (!booking.phone) {
+      toast.error("No phone number found!");
+      return;
+    }
+
+    // ensure country code, e.g. 880 for Bangladesh
+    const phone = booking.phone.startsWith("880")
+      ? booking.phone
+      : `880${booking.phone.replace(/^0/, "")}`;
+
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, "_blank");
+    toast.info("Opening WhatsApp...");
   };
 
   return (
@@ -129,7 +145,8 @@ We’re excited to see you at Mohakash Turf.`;
           </div>
         </div>
 
-        <DialogFooter className="flex justify-end gap-2 mt-4">
+        {/* Buttons */}
+        <DialogFooter className="flex justify-end gap-1 mt-4">
           <Button variant="outline" onClick={onClose}>
             Close
           </Button>
@@ -140,6 +157,13 @@ We’re excited to see you at Mohakash Turf.`;
           <Button onClick={handleDownload}>
             <Download className="w-4 h-4 mr-2" />
             Download
+          </Button>
+          <Button
+            onClick={handleWhatsApp}
+            // className="bg-green-600 hover:bg-green-700 text-white"
+          >
+            <MessageCircle className="w-4 h-4 mr-2" />
+            WhatsApp
           </Button>
         </DialogFooter>
       </DialogContent>
