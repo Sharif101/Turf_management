@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 export default function Page() {
   const [memberships, setMemberships] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isTrue, setIsTrue] = useState(false);
 
   const fetchPackages = async () => {
     try {
@@ -19,13 +20,13 @@ export default function Page() {
       });
 
       if (!res.ok) {
-        throw new Error("Failed to fetch package plans");
+        throw new Error("Failed to fetch memberships");
       }
 
       const data = await res.json();
       setMemberships(data);
     } catch (error) {
-      console.error("Error fetching packages:", error);
+      console.error("Error fetching memberships:", error);
       setMemberships([]);
     } finally {
       setLoading(false);
@@ -34,7 +35,7 @@ export default function Page() {
 
   useEffect(() => {
     fetchPackages();
-  }, []);
+  }, [isTrue]);
 
   return (
     <DashboardLayout>
@@ -42,6 +43,8 @@ export default function Page() {
         memberships={memberships}
         setMemberships={setMemberships}
         loading={loading}
+        isTrue={isTrue}
+        setIsTrue={setIsTrue} // ✅ pass toggle props
       />
     </DashboardLayout>
   );
