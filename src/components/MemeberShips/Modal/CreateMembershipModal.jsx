@@ -29,6 +29,7 @@ import {
   Calendar,
   FileText,
   UserPlus,
+  CheckCircle2,
 } from "lucide-react";
 
 export default function CreateMembershipModal({
@@ -51,7 +52,7 @@ export default function CreateMembershipModal({
     endDate: "",
     note: "",
     planType: null,
-    status: "active",
+    status: "active", // default status
   });
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export default function CreateMembershipModal({
         endDate: "",
         note: "",
         planType: null,
-        status: "active",
+        status: "active", // reset default status
       });
     } catch (error) {
       toast.error(`${error.message}`);
@@ -285,6 +286,27 @@ export default function CreateMembershipModal({
                 className="h-10"
                 placeholder="Add any additional notes"
               />
+            </div>
+
+            {/* STATUS FIELD */}
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-gray-500" />
+                Status *
+              </Label>
+              <Select
+                value={form.status}
+                onValueChange={(value) => setForm({ ...form, status: value })}
+              >
+                <SelectTrigger className="h-10">
+                  <SelectValue placeholder="Select status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="expired">Expired</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

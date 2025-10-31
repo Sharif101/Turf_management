@@ -11,9 +11,13 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, PlusCircle, Trash2 } from "lucide-react";
+import { Eye, Pen, PlusCircle, Trash2 } from "lucide-react";
 import TableSkeleton from "../Resources/TableSkeleton";
 import CreateMembershipModal from "./Modal/CreateMembershipModal";
+import EditMembershipModal from "./Modal/EditMembershipModal";
+import DeleteMembershipModal from "./Modal/DeleteMembershipModal";
+import Countdown from "@/hooks/Countdown";
+import ViewMembershipModal from "./Modal/ViewMembershipModal";
 
 export default function Memberships({
   memberships,
@@ -22,6 +26,11 @@ export default function Memberships({
   isTrue,
 }) {
   const [createModalOpen, setCreateModalOpen] = useState(false);
+
+  const [selectedMembership, setSelectedMembership] = useState(null);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
 
   const getBadge = (value) => {
     const base = "px-2 py-1 rounded-full text-xs font-semibold uppercase";
@@ -100,14 +109,35 @@ export default function Memberships({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          className="text-gray-600 hover:text-gray-700 hover:bg-gray-50"
+                          onClick={() => {
+                            setSelectedMembership(m);
+                            setViewOpen(true);
+                          }}
                         >
                           <Eye size={18} />
                         </Button>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          onClick={() => {
+                            setSelectedMembership(m);
+                            setEditOpen(true);
+                          }}
+                        >
+                          <Pen size={18} />
+                        </Button>
+
                         <Button
                           variant="ghost"
                           size="icon"
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => {
+                            setSelectedMembership(m);
+                            setDeleteOpen(true);
+                          }}
                         >
                           <Trash2 size={18} />
                         </Button>
@@ -126,6 +156,28 @@ export default function Memberships({
         onClose={() => setCreateModalOpen(false)}
         setIsTrue={setIsTrue}
         isTrue={isTrue}
+      />
+
+      <EditMembershipModal
+        open={editOpen}
+        onClose={() => setEditOpen(false)}
+        membership={selectedMembership}
+        setIsTrue={setIsTrue}
+        isTrue={isTrue}
+      />
+
+      <DeleteMembershipModal
+        open={deleteOpen}
+        onClose={() => setDeleteOpen(false)}
+        membership={selectedMembership}
+        setIsTrue={setIsTrue}
+        isTrue={isTrue}
+      />
+
+      <ViewMembershipModal
+        open={viewOpen}
+        onClose={() => setViewOpen(false)}
+        membership={selectedMembership}
       />
     </div>
   );
