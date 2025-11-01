@@ -30,6 +30,7 @@ import {
   FileText,
   Edit,
   CheckCircle2,
+  Trophy,
 } from "lucide-react";
 
 export default function EditMembershipModal({
@@ -43,6 +44,7 @@ export default function EditMembershipModal({
   const [form, setForm] = useState(membership || {});
   const [loading, setLoading] = useState(false);
 
+  // Fetch package plans
   useEffect(() => {
     fetch("http://localhost:5000/api/package-plans")
       .then((res) => res.json())
@@ -50,10 +52,12 @@ export default function EditMembershipModal({
       .catch(() => toast.error("Failed to load plans"));
   }, []);
 
+  // Update form when membership changes
   useEffect(() => {
     if (membership) setForm(membership);
   }, [membership]);
 
+  // Update handler
   const handleUpdate = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -108,7 +112,6 @@ export default function EditMembershipModal({
                 <Input
                   value={form.name || ""}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="h-10"
                   placeholder="Enter full name"
                 />
               </div>
@@ -120,7 +123,6 @@ export default function EditMembershipModal({
                 <Input
                   value={form.phone || ""}
                   onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="h-10"
                   placeholder="Enter phone number"
                 />
               </div>
@@ -134,7 +136,6 @@ export default function EditMembershipModal({
               <Input
                 value={form.email || ""}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
-                className="h-10"
                 placeholder="Enter email"
               />
             </div>
@@ -147,7 +148,6 @@ export default function EditMembershipModal({
               <Input
                 value={form.address || ""}
                 onChange={(e) => setForm({ ...form, address: e.target.value })}
-                className="h-10"
                 placeholder="Enter address"
               />
             </div>
@@ -169,7 +169,7 @@ export default function EditMembershipModal({
                 }}
                 value={form.planType?._id || ""}
               >
-                <SelectTrigger className="h-10">
+                <SelectTrigger>
                   <SelectValue placeholder="Select a plan" />
                 </SelectTrigger>
                 <SelectContent>
@@ -180,6 +180,38 @@ export default function EditMembershipModal({
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Match Info */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-yellow-500" />
+                  Total Match
+                </Label>
+                <Input
+                  type="number"
+                  value={form.totalMatch || ""}
+                  onChange={(e) =>
+                    setForm({ ...form, totalMatch: e.target.value })
+                  }
+                  placeholder="Enter total matches"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-green-500" />
+                  Played Match
+                </Label>
+                <Input
+                  type="number"
+                  value={form.playedMatch || ""}
+                  onChange={(e) =>
+                    setForm({ ...form, playedMatch: e.target.value })
+                  }
+                  placeholder="Enter played matches"
+                />
+              </div>
             </div>
 
             {/* Payment Info */}
@@ -193,7 +225,6 @@ export default function EditMembershipModal({
                   type="number"
                   value={form.price || ""}
                   onChange={(e) => setForm({ ...form, price: e.target.value })}
-                  className="h-10"
                   placeholder="0.00"
                 />
               </div>
@@ -208,7 +239,6 @@ export default function EditMembershipModal({
                   onChange={(e) =>
                     setForm({ ...form, paidAmount: e.target.value })
                   }
-                  className="h-10"
                   placeholder="0.00"
                 />
               </div>
@@ -223,7 +253,6 @@ export default function EditMembershipModal({
                   onChange={(e) =>
                     setForm({ ...form, dueAmount: e.target.value })
                   }
-                  className="h-10"
                   placeholder="0.00"
                 />
               </div>
@@ -242,7 +271,6 @@ export default function EditMembershipModal({
                   onChange={(e) =>
                     setForm({ ...form, startDate: e.target.value })
                   }
-                  className="h-10"
                 />
               </div>
               <div className="space-y-2">
@@ -256,7 +284,6 @@ export default function EditMembershipModal({
                   onChange={(e) =>
                     setForm({ ...form, endDate: e.target.value })
                   }
-                  className="h-10"
                 />
               </div>
             </div>
@@ -270,12 +297,11 @@ export default function EditMembershipModal({
               <Input
                 value={form.note || ""}
                 onChange={(e) => setForm({ ...form, note: e.target.value })}
-                className="h-10"
                 placeholder="Add any note"
               />
             </div>
 
-            {/* Status Dropdown */}
+            {/* Status */}
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-gray-500" />
@@ -285,7 +311,7 @@ export default function EditMembershipModal({
                 value={form.status}
                 onValueChange={(value) => setForm({ ...form, status: value })}
               >
-                <SelectTrigger className="h-10">
+                <SelectTrigger>
                   <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -298,15 +324,10 @@ export default function EditMembershipModal({
           </div>
 
           <DialogFooter className="flex justify-end gap-3 pt-4 border-t">
-            <Button
-              variant="outline"
-              onClick={onClose}
-              type="button"
-              className="h-10 px-6"
-            >
+            <Button variant="outline" onClick={onClose} type="button">
               Cancel
             </Button>
-            <Button type="submit" disabled={loading} className="h-10 px-6">
+            <Button type="submit" disabled={loading}>
               {loading ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>

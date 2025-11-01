@@ -21,6 +21,8 @@ import {
   Clock,
   CheckCircle2,
   CalendarCheck,
+  Trophy,
+  Target,
 } from "lucide-react";
 import Countdown from "@/hooks/Countdown";
 
@@ -118,6 +120,18 @@ export default function ViewMembershipModal({ open, onClose, membership }) {
                   label="Duration"
                   value={membership.planType?.duration}
                   iconColor="text-orange-600"
+                />
+                <InfoRow
+                  icon={Trophy}
+                  label="Total Match"
+                  value={membership.totalMatch}
+                  iconColor="text-fuchsia-600"
+                />
+                <InfoRow
+                  icon={Target}
+                  label="Played Match"
+                  value={membership.playedMatch}
+                  iconColor="text-amber-600"
                 />
                 <InfoRow
                   icon={CheckCircle2}

@@ -30,6 +30,7 @@ import {
   FileText,
   UserPlus,
   CheckCircle2,
+  Trophy,
 } from "lucide-react";
 
 export default function CreateMembershipModal({
@@ -52,7 +53,9 @@ export default function CreateMembershipModal({
     endDate: "",
     note: "",
     planType: null,
-    status: "active", // default status
+    status: "active",
+    totalMatch: "",
+    playedMatch: "",
   });
 
   useEffect(() => {
@@ -91,7 +94,9 @@ export default function CreateMembershipModal({
         endDate: "",
         note: "",
         planType: null,
-        status: "active", // reset default status
+        status: "active",
+        totalMatch: "",
+        playedMatch: "",
       });
     } catch (error) {
       toast.error(`${error.message}`);
@@ -114,6 +119,7 @@ export default function CreateMembershipModal({
 
         <div className="space-y-6 py-4">
           <div className="space-y-4">
+            {/* Existing fields */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -197,6 +203,41 @@ export default function CreateMembershipModal({
               </Select>
             </div>
 
+            {/* NEW: Total Match + Played Match */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-gray-500" />
+                  Total Matches
+                </Label>
+                <Input
+                  type="number"
+                  value={form.totalMatch}
+                  onChange={(e) =>
+                    setForm({ ...form, totalMatch: e.target.value })
+                  }
+                  className="h-10"
+                  placeholder="Total matches"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
+                  <Trophy className="w-4 h-4 text-green-500" />
+                  Played Matches
+                </Label>
+                <Input
+                  type="number"
+                  value={form.playedMatch}
+                  onChange={(e) =>
+                    setForm({ ...form, playedMatch: e.target.value })
+                  }
+                  className="h-10"
+                  placeholder="Played matches"
+                />
+              </div>
+            </div>
+
+            {/* PRICE, DUE, PAID etc. remain same */}
             <div className="grid grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -244,6 +285,7 @@ export default function CreateMembershipModal({
               </div>
             </div>
 
+            {/* Dates, Note, and Status stay same */}
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -288,7 +330,6 @@ export default function CreateMembershipModal({
               />
             </div>
 
-            {/* STATUS FIELD */}
             <div className="space-y-2">
               <Label className="text-sm font-medium text-gray-700 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4 text-gray-500" />

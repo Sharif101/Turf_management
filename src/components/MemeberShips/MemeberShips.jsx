@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -26,7 +26,6 @@ export default function Memberships({
   isTrue,
 }) {
   const [createModalOpen, setCreateModalOpen] = useState(false);
-
   const [selectedMembership, setSelectedMembership] = useState(null);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -42,6 +41,10 @@ export default function Memberships({
       case "inactive":
         return (
           <span className={`${base} bg-red-100 text-red-800`}>Inactive</span>
+        );
+      case "expired":
+        return (
+          <span className={`${base} bg-gray-200 text-gray-800`}>Expired</span>
         );
       default:
         return (
@@ -70,7 +73,7 @@ export default function Memberships({
       {/* Table */}
       <Card className="p-6 bg-white border-gray-200">
         {loading ? (
-          <TableSkeleton row={10} column={10} />
+          <TableSkeleton row={10} column={12} />
         ) : memberships.length === 0 ? (
           <p className="text-center py-12 text-gray-500">
             No memberships found
@@ -151,6 +154,7 @@ export default function Memberships({
         )}
       </Card>
 
+      {/* Modals */}
       <CreateMembershipModal
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
